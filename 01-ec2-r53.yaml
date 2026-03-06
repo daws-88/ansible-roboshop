@@ -6,8 +6,12 @@
     sg_id:  sg-00234e667183faf3a
     zone_id: "Z0209787199P76DBHQQAW" 
     domain_name: "daws88s.fun"
+    # we can also create intances through cl line
     instances:
     - mongodb
+    - redis
+    # rabbitmq
+    # catalogue
   tasks:
   - name: create ec2 instance
     amazon.aws.ec2_instance:
@@ -23,5 +27,38 @@
   - name: print the ec2_output
     ansible.builtin.debug:
       msg: "{{ ec2_output }}"
+
+ #- name: print public ip 
+    # ansible.builtin.debug:
+     # msg: "{{ item. instances[0].public_ip address }}"
+    # loop: "{{ ec2_output.results }}"
+
+# create record and update record 
+  - name: create and update route 53
+    amazon.aws.route53:
+      state: present
+      zone: "{{ domain_name }}"
+      record: "{{ item.name }}.{{ domain_name }}"
+      type: A
+      value: "{{ item.instances[0].private_ip_address }}"
+      ttl: 2
+      overwrite: true
+    loop: "{{ ec2_output.results }}"
+  
+   # create and update record for frontend
+  - name: create and update route 53
+    amazon.aws.route53:
+      state: present
+      zone: "{{ domain_name }}"
+      record: "{{ item.name }}.{{ domain_name }}"
+      type: A
+      value: "{{ item.instances[0].public_ip_address }}"
+      ttl: 2
+      overwrite: true
+    when: item.item == "frontend"
+    loop: "{{ ec2_output.results }}"
+
+      
+
 
 
