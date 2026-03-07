@@ -9,8 +9,8 @@
     # we can also create intances through cl line
     instances:
     - mongodb
-    - redis
-    - rabbitmq
+    # redis
+   # - rabbitmq
     - mysql
   tasks:
   - name: create ec2 instance
