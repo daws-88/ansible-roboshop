@@ -1,32 +1,47 @@
-- name: setup redis server
+- name: Setup Redis Server
   hosts: redis
   become: yes
   tasks:
-  - name: disable default redis
-    ansible.builtin.command: dnf module disable redis -y
 
-  - name: enable redis 7
-    ansible.builtin.command: dnf module enable redis:7 -y
+    - name: Disable default Redis module
+      ansible.builtin.command: dnf module disable redis -y
 
-  - name: install redis
-    ansible.builtin.package:
-      name: redis
-      state: present
-  
-  - name: allow remote connections
-    ansible.builtin.replace:
-      path: /etc/redis/redis.conf
-      regexp: '127.0.0.1'
-      replace: '0.0.0.0'
+    - name: Enable Redis 7 module
+      ansible.builtin.command: dnf module enable redis:7 -y
 
-  - name: disable proctected mode
-    ansible.builtin.lineinfile:
-      path: /etc/redis/redis.conf
-      regexp: 'protected-mode'
-      line: 'protected-mode no'
+    - name: Install Redis
+      ansible.builtin.package:
+        name: redis
+        state: present
 
-  - name: start and enable redis
-    ansible.builtin.service:
-      name: redis
-      state: started
-      enabled: yes
+    - name: Allow remote connections
+      ansible.builtin.replace:
+        path: /etc/redis/redis.conf
+        regexp: '^bind 127.0.0.1'
+        replace: 'bind 0.0.0.0'
+
+    - name: Disable protected mode
+      ansible.builtin.lineinfile:
+        path: /etc/redis/redis.conf
+        regexp: '^protected-mode'
+        line: 'protected-mode no'
+
+    - name: Remove invalid test-memory line (fix fatal config error)
+      ansible.builtin.lineinfile:
+        path: /etc/redis/redis.conf
+        regexp: '^test-memory'
+        state: absent
+
+    - name: Ensure Redis data directory exists with correct permissions
+      ansible.builtin.file:
+        path: /var/lib/redis
+        state: directory
+        owner: redis
+        group: redis
+        mode: '0770'
+
+    - name: Start and enable Redis service
+      ansible.builtin.service:
+        name: redis
+        state: started
+        enabled: yes
