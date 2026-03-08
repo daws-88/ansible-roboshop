@@ -2,7 +2,6 @@
   hosts: redis
   become: yes
   tasks:
-
     - name: Disable default Redis module
       ansible.builtin.command: dnf module disable redis -y
 
@@ -17,28 +16,14 @@
     - name: Allow remote connections
       ansible.builtin.replace:
         path: /etc/redis/redis.conf
-        regexp: '^bind 127.0.0.1'
-        replace: 'bind 0.0.0.0'
+        regexp: ' 127.0.0.1'
+        replace: '0.0.0.0'
 
     - name: Disable protected mode
       ansible.builtin.lineinfile:
         path: /etc/redis/redis.conf
         regexp: '^protected-mode'
         line: 'protected-mode no'
-
-    - name: Remove invalid test-memory line (fix fatal config error)
-      ansible.builtin.lineinfile:
-        path: /etc/redis/redis.conf
-        regexp: '^test-memory'
-        state: absent
-
-    - name: Ensure Redis data directory exists with correct permissions
-      ansible.builtin.file:
-        path: /var/lib/redis
-        state: directory
-        owner: redis
-        group: redis
-        mode: '0770'
 
     - name: Start and enable Redis service
       ansible.builtin.service:
