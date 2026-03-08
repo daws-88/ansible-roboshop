@@ -10,7 +10,7 @@
 
   - name: install nodejs
     ansible.builtin.package:
-      name: nodejs -y
+      name: nodejs 
       state: present
 
   - name: create system user
