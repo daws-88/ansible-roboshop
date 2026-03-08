@@ -24,9 +24,3 @@
         path: /etc/redis/redis.conf
         regexp: 'protected-mode'
         line: 'protected-mode no'
-
-    - name: Start and enable Redis service
-      ansible.builtin.service:
-        name: redis
-        state: started
-        enabled: yes
