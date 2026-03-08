@@ -9,9 +9,9 @@
     # we can also create intances through cl line
     instances:
     - mongodb
-    # redis
-   # - rabbitmq
-   # - mysql
+    - redis
+    - mysql
+   
   tasks:
   - name: create ec2 instance
     amazon.aws.ec2_instance:
