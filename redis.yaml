@@ -16,7 +16,7 @@
     - name: Allow remote connections
       ansible.builtin.replace:
         path: /etc/redis/redis.conf
-        regexp: ' 127.0.0.1'
+        regexp: '127.0.0.1'
         replace: '0.0.0.0'
 
     - name: Disable protected mode
@@ -24,3 +24,9 @@
         path: /etc/redis/redis.conf
         regexp: 'protected-mode'
         line: 'protected-mode no'
+
+    - name: strat and enabled redis
+      ansible.builtin.service:
+        name: redis
+        state: started
+        enabled: yes
