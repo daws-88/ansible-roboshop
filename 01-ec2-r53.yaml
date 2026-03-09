@@ -12,6 +12,9 @@
     - redis
     - mysql
     - catalogue
+    - user
+    - cart
+    - shipping
 
   tasks:
   - name: create ec2 instance
