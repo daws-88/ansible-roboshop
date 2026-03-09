@@ -1,5 +1,5 @@
-- name: setup user
-  hosts: user
+- name: setup payment
+  hosts: payment
   become: yes
   tasks:
   - name: install packages
