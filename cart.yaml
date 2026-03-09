@@ -1,5 +1,5 @@
-- name: setup catalogue
-  hosts: catalogue
+- name: setup user
+  hosts: user
   become: yes
   tasks:
   - name: disable nodejs
@@ -29,7 +29,7 @@
 
   - name: remove catalogue file
     ansible.builtin.file:
-      path: /tmp/catalogue.zip 
+      path: /tmp/cart.zip
       state: absent
 
   - name: create app direcrtory
@@ -39,50 +39,27 @@
 
   - name: download catalogue applications
     ansible.builtin.get_url:
-      url: https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip 
-      dest: /tmp/catalogue.zip 
+      url: https://roboshop-artifacts.s3.amazonaws.com/cart.-v3.zip 
+      dest: /tmp/cart.zip 
 
   - name: extract  application
     ansible.builtin.unarchive:
-      src: /tmp/catalogue.zip 
+      src: /tmp/cart.zip
       dest: /app
       remote_src: yes
 
-  - name: Install packages and dependencies
+  - name: Install packages and dependencies based on package.json
     community.general.npm:
       path: /app
 
   - name: copying service file
     ansible.builtin.copy:
-      src: catalogue.service
-      dest: /etc/systemd/system/catalogue.service
-
-  - name: copy mongodb repo
-    ansible.builtin.copy:
-      src: mongo.repo
-      dest: /etc/yum.repos.d/mongo.repo
-
-  - name: install mongodb client
-    ansible.builtin.package:
-      name: mongodb-mongosh 
-      state: present
-
-  - name: connnect to mongodb
-    ansible.builtin.command: mongosh mongodb.daws88s.fun --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')"
-    register: catalogue_output
-
- # - name: print catalogue_output
-   # ansible.builtin.debug:
-   #   msg: "{{ catalogue_output }}"
-
-  - name: load data into mongodb
-    ansible.builtin.shell: mongosh --host mongodb.daws88s.fun </app/db/master-data.js
-    when: catalogue_output.stdout | int < 0
+      src: cart.service
+      dest: /etc/systemd/system/cart.service
 
   - name: daemon reload enable and start
     ansible.builtin.systemd_service:
-      name: catalogue
+      name: cart
       enabled: true
       state: started
       daemon_reload: true
-  
