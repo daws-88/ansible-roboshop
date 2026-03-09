@@ -1,15 +1,15 @@
-- name: setup payment
+- name: configure payment server
   hosts: payment
   become: yes
   tasks:
-  - name: install packages
+  - name: install python package
     ansible.builtin.dnf:
       name: "{{ item }}"
       state: present
-      loop:
-      - Python
-      - gcc
-      - python3-devel 
+    loop:
+    - python3
+    - gcc
+    - python3-devel
 
   - name: create system user
     ansible.builtin.user:
