@@ -15,15 +15,14 @@
 
   - name: Remove defaukt html content
     ansible.builtin.file:
-    path: /usr/share/nginx/html/
-    state: absent
+      path: /usr/share/nginx/html/
+      state: absent
 
   - name: create html directory
     ansible.builtin.file:
       state: directory
       path: /usr/share/nginx/html/
 
-  
   - name: download frontend application
     ansible.builtin.get_url:
       url: https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip
