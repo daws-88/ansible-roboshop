@@ -12,10 +12,11 @@
 
   - name: Install required Python libraries for MySQL
     ansible.builtin.pip:
-      executable: pip3.9
-      name:
-      - PyMySQL
-      - cryptography
+       executable: pip3.3
+       name:
+    loop:
+    - cryptography
+    - PyMySQL
 
   - name: create system user
     ansible.builtin.user:
