@@ -37,7 +37,7 @@
       path: /app
       state: directory
 
-  - name: download catalogue applications
+  - name: download cart applications
     ansible.builtin.get_url:
       url: https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip
       dest: /tmp/cart.zip 
