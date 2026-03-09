@@ -40,10 +40,10 @@
       state: absent
 
   - name: copy nginx.conf file
-    ansible.builitin.copy:
+    ansible.builtin.copy:
        src: nginx.conf
        dest: /etc/nginx/nginx.conf
-       
+
   - name: restart nginx
     ansible.builtin.service:
       name: nginx
