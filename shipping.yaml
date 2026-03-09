@@ -68,7 +68,7 @@
   - name: Copy configuration file to remote host
     ansible.builtin.copy:
       src: shipping.service
-      dest: vim /etc/systemd/system/shipping.service
+      dest: /etc/systemd/system/shipping.service
 
   - name: Import the SQL file into the 'shipping_db' database
     community.mysql.mysql_db:
