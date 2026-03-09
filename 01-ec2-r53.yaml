@@ -11,6 +11,7 @@
     - mongodb
     - redis
     - mysql
+    - catalogue
 
   tasks:
   - name: create ec2 instance
