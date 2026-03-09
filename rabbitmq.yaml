@@ -14,9 +14,9 @@
 
   - name: strat and enable rabbit mysql
     ansible.builtin.service:
-    name: rabbitmq-server
-    state: started
-    enabled: yes
+      name: rabbitmq-server
+      state: started
+      enabled: yes
 
 - name: crate user and assigin permissions to all queees
   community.rabbitmq.rabbitmq_user:
