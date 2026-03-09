@@ -1,4 +1,5 @@
-- name: setup shipping
+
+- name: configure shipping server
   hosts: shipping
   become: yes
   tasks:
@@ -7,81 +8,78 @@
       name: "{{ item }}"
       state: present
     loop:
-    - maven 
+    - maven
     - mysql
 
-  - name: Install required Python libraries for MySQL
+  - name: install mysql python libraries
     ansible.builtin.pip:
-       executable: pip3.3
-       name:
+      executable: pip3.9
+      name: "{{ item }}"
     loop:
     - cryptography
     - PyMySQL
 
-  - name: create system user
+  - name: create roboshop system user
     ansible.builtin.user:
       name: roboshop
-      state: present
-      shell: /usr/sbin/nologin
-      comment: "roboshop system user"
-      home: /app
+      comment: RoboShop System user
       system: true
+      shell: /sbin/nologin
+      home: /app
 
-   # Safe to remove directory, because 2nd time if we run it will download freshly. no error if does not exist
-  - name: remove directory
+  - name: remove app directory
     ansible.builtin.file:
       path: /app
       state: absent
 
-  - name: remove shipping  file
+  - name: create app directory
+    ansible.builtin.file:
+      state: directory
+      path: /app
+
+  - name: Delete shipping file
     ansible.builtin.file:
       path: /tmp/shipping.zip
       state: absent
 
-  - name: create app direcrtory
-    ansible.builtin.file:
-      path: /app
-      state: directory
-
-  
-  - name: download shipping  applications
+  - name: download shipping application
     ansible.builtin.get_url:
-      url: https://roboshop-artifacts.s3.amazonaws.com/shipping.-v3.zip 
-      dest: /tmp/shipping.zip 
+      url: https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip
+      dest: /tmp/shipping.zip
 
-  - name: extract  application
+  - name: extract shipping application
     ansible.builtin.unarchive:
       src: /tmp/shipping.zip
       dest: /app
       remote_src: yes
 
-  - name: Install packages and dependencies
-    ansible.builtin.command: mvn clean package 
+  - name: install dependencies
+    ansible.builtin.command: mvn clean package
     args:
       chdir: /app
 
-  - name: Move .jar file
-    ansible.builitin.command: mv target/shipping-1.0.jar shipping.jar 
- `  args:
+  - name: move jar file
+    ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
+    args:
       chdir: /app
-    
-  - name: Copy configuration file to remote host
+
+  - name: copy shipping service
     ansible.builtin.copy:
       src: shipping.service
       dest: /etc/systemd/system/shipping.service
 
-  - name: Import the SQL file into the 'shipping_db' database
+  - name: import shipping data into mysql
     community.mysql.mysql_db:
-      name: all
       state: import
+      name: all
+      login_host: mysql.daws86s.fun
       login_user: root
-      login_host: daws88s.fun
       login_password: RoboShop@1
       target: "{{ item }}"
     loop:
-    - < /app/db/schema.sql
-    - < /app/db/app-user.sql 
-    - < /app/db/master-data.sql
+    - /app/db/schema.sql
+    - /app/db/app-user.sql 
+    - /app/db/master-data.sql
 
   - name: daemon reload enable and start
     ansible.builtin.systemd_service:
@@ -89,4 +87,3 @@
       enabled: true
       state: started
       daemon_reload: true
-        
