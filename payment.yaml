@@ -2,7 +2,7 @@
   hosts: user
   become: yes
   tasks:
-  - name: install nodejs
+  - name: install packages
     ansible.builtin.dnf:
       name: "{{ item }}"
       state: present
