@@ -10,6 +10,13 @@
     - maven 
     - mysql
 
+  - name: Install required Python libraries for MySQL
+    ansible.builtin.pip:
+      executable: pip3.9
+      name:
+      - PyMySQL
+      -  cryptography
+
   - name: create system user
     ansible.builtin.user:
       name: roboshop
