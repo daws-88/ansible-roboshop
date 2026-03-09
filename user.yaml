@@ -37,9 +37,9 @@
       path: /app
       state: directory
 
-  - name: download catalogue applications
+  - name: download user  applications
     ansible.builtin.get_url:
-      url: https://roboshop-artifacts.s3.amazonaws.com/user.-v3.zip 
+      url:  https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip
       dest: /tmp/user.zip 
 
   - name: extract  application
