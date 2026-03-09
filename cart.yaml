@@ -27,7 +27,7 @@
       path: /app
       state: absent
 
-  - name: remove catalogue file
+  - name: remove cart file
     ansible.builtin.file:
       path: /tmp/cart.zip
       state: absent
