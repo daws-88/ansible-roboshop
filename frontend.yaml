@@ -1,48 +1,49 @@
-- name: setup  frontend
+
+- name: configure frontend server
   hosts: frontend
   become: yes
   tasks:
-  - name: disable nginx
-    ansible.builtin.command: dnf module disable nginx 
+  - name: disable default nginx
+    ansible.builtin.command: dnf module disable nginx -y
 
-  - name: enable nginx
-    ansible.builtin.command: dnf module enable nginx1.24
+  - name: enable nginx 1.24
+    ansible.builtin.command: dnf module enable nginx:1.24 -y
 
   - name: install nginx
     ansible.builtin.dnf:
       name: nginx
       state: present
 
-  - name: Remove defaukt html content
+  - name: remove html directory
     ansible.builtin.file:
-      path: /usr/share/nginx/html/
       state: absent
+      path: /usr/share/nginx/html/
 
   - name: create html directory
     ansible.builtin.file:
-      state: directory
       path: /usr/share/nginx/html/
+      state: directory
 
   - name: download frontend application
     ansible.builtin.get_url:
       url: https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip
       dest: /tmp/frontend.zip
 
-  - name: extract frontend  application
+  - name: extract frontend application
     ansible.builtin.unarchive:
       src: /tmp/frontend.zip
-      dest: /usr/share/nginx/html 
+      dest: /usr/share/nginx/html/
       remote_src: yes
 
-  - name: remove defaukt content in nginx.configuration
+  - name: delete default nginx conf
     ansible.builtin.file:
-      path: /etc/nginx/nginx.conf
       state: absent
+      path: /etc/nginx/nginx.conf
 
-  - name: copy nginx.conf file
+  - name: copy nginx conf
     ansible.builtin.copy:
-       src: nginx.conf
-       dest: /etc/nginx/nginx.conf
+      src: nginx.conf
+      dest: /etc/nginx/nginx.conf
 
   - name: restart nginx
     ansible.builtin.service:
