@@ -7,8 +7,6 @@
     zone_id: Z04408301YE1UN4Q5BR1X
     domain_name: "daws88s.fun"
     # we can also create intances through cl line
-    instances:
-    # mongodb
 
   tasks:
   - name: create ec2 instance
